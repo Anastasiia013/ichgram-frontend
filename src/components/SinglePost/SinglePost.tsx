@@ -10,6 +10,7 @@ import { getUserById } from "../../shared/api/profile-api";
 import type { Post } from "../../types/Post";
 import type { User } from "../../types/User";
 import EmojiPickerButton from "../../layouts/EmojiButton/EmojiButton";
+import GradientAvatar from "../../layouts/GradientAvatar/GradientAvatar";
 
 import styles from "./SinglePost.module.css";
 
@@ -134,10 +135,10 @@ const SinglePost: React.FC = () => {
           <div className={styles.scrollableContent}>
             {author && (
               <div className={styles.authorInfo}>
-                <img
+                <GradientAvatar
                   src={author.avatarUrl || "/no-profile-pic-icon-11.jpg"}
                   alt="avatar"
-                  className={styles.authorAvatar}
+                  size={28}
                 />
                 <p>{author.username}</p>
 
@@ -160,10 +161,10 @@ const SinglePost: React.FC = () => {
             <div className={styles.postBlock}>
               {author && (
                 <div className={styles.authorInfoShort}>
-                  <img
+                  <GradientAvatar
                     src={author.avatarUrl || "/no-profile-pic-icon-11.jpg"}
                     alt="avatar"
-                    className={styles.authorAvatar}
+                    size={28}
                   />
                   <span className={styles.userPost}>
                     <p>

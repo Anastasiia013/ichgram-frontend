@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../redux/store";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../redux/store";
 
 import { useFollow } from "../../shared/hooks/useFollow";
 import { getUserByUsername } from "../../shared/api/profile-api";
-import { getPostsByUsername } from "../../shared/api/posts-api";
-import type { User } from "../../types/User";
-import type { Post } from "../../types/Post";
+import { fetchPostsByUsername } from "../../redux/posts/posts-thunks";
 
+import type { User } from "../../types/User";
 import GradientAvatar from "../../layouts/GradientAvatar/GradientAvatar";
 import Button from "../../layouts/Button/Button";
 import BioWithToggle from "./BioWithToggle/BioWithToggle";
@@ -20,11 +18,15 @@ import styles from "./Profile.module.css";
 const Profile = () => {
   const { username } = useParams<{ username: string }>();
   const [user, setUser] = useState<User | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const currentUser = useSelector((state: RootState) => state.auth.user);
+  const posts = useSelector((state: RootState) => state.posts.posts);
+  const loading = useSelector((state: RootState) => state.posts.loading);
+  const error = useSelector((state: RootState) => state.posts.error);
+
   const { isFollowing, handleFollow, handleUnfollow, isProcessing } = useFollow(
     user,
     setUser
@@ -32,11 +34,14 @@ const Profile = () => {
 
   useEffect(() => {
     if (!username) return;
-    getPostsByUsername(username).then(setPosts).catch(console.error);
-  }, [username]);
+    dispatch(fetchPostsByUsername(username));
+  }, [username, dispatch]);
 
   useEffect(() => {
     if (!username) return;
+    if (username === currentUser?.username && posts.length === 0) {
+      dispatch(fetchPostsByUsername(username));
+    }
 
     const fetchUser = async () => {
       try {
@@ -48,9 +53,11 @@ const Profile = () => {
     };
 
     fetchUser();
-  }, [username, currentUser]);
+  }, [username, dispatch, currentUser, posts.length]);
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <p>Loading profile...</p>;
+  if (loading) return <p>Loading posts...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className={styles.profilePage}>
@@ -95,6 +102,7 @@ const Profile = () => {
               <p>following</p>
             </div>
           </div>
+
           <div className={styles.bio}>
             <strong>{user.fullname}</strong>
             <BioWithToggle text={user.bio} />

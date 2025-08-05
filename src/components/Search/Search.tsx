@@ -17,6 +17,8 @@ interface User {
   avatarUrl?: string;
 }
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const Search: React.FC<Props> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<User[]>([]);
@@ -33,6 +35,7 @@ const Search: React.FC<Props> = ({ isOpen, onClose }) => {
     const timeout = setTimeout(async () => {
       try {
         const data = await searchUsers(query);
+        console.log(data);
         setResults(data);
       } catch (err) {
         console.error("Ошибка при поиске:", err);
@@ -77,9 +80,7 @@ const Search: React.FC<Props> = ({ isOpen, onClose }) => {
 
       {displayedList.length > 0 && (
         <>
-          {!query.trim() && (
-            <p className={styles.subheading}>Recent</p>
-          )}
+          {!query.trim() && <p className={styles.subheading}>Recent</p>}
 
           <ul className={styles.list}>
             {displayedList.map((user) => (
@@ -89,7 +90,13 @@ const Search: React.FC<Props> = ({ isOpen, onClose }) => {
                 onClick={() => handleUserClick(user)}
               >
                 <img
-                  src={user.avatarUrl || "/no-profile-pic-icon-11.jpg"}
+                  src={
+                    user.avatarUrl && user.avatarUrl.trim() !== ""
+                      ? user.avatarUrl.startsWith("/uploads")
+                        ? backendUrl + user.avatarUrl
+                        : user.avatarUrl
+                      : "/no-profile-pic-icon-11.jpg"
+                  }
                   alt={`${user.username} avatar`}
                   className={styles.avatar}
                 />

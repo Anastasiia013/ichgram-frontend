@@ -1,39 +1,33 @@
 .avatarWrapper {
-    width: 168px;
-    height: 168px;
-    border-radius: 50%;
-    background: linear-gradient(40deg,
-            #feda75,
-            #fa7e1e,
-            #d62976,
-            #962fbf,
-            #4f5bd5);
-    padding: 6px;
-    display: inline-block;
-    box-sizing: border-box;
-    position: relative;
+  border-radius: 50%;
+  background: linear-gradient(
+    40deg,
+    #feda75,
+    #fa7e1e,
+    #d62976,
+    #962fbf,
+    #4f5bd5
+  );
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
-.avatarWrapper::before {
-    content: "";
-    position: absolute;
-    top: 5px;
-    bottom: 5px;
-    left: 5px;
-    right: 5px;
-    border-radius: 50%;
-    background: white;
-    z-index: 0;
+.avatarInner {
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .avatarImage {
-    width: calc(100% - 10px);
-    height: calc(100% - 10px);
-    border-radius: 50%;
-    object-fit: cover;
-    z-index: 1;
-    background-color: white;
-    display: block;
-    position: relative;
-    margin: 5px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }

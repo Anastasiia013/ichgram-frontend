@@ -82,11 +82,17 @@ export const unlikeComment = async (
 export const createNewPost = async (
   formData: FormData,
   token: string
-): Promise<void> => {
-  await backendInstance.post("/posts/create-new-post", formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  });
+): Promise<Post> => {
+  const response = await backendInstance.post(
+    "/posts/create-new-post",
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return response.data as Post;
 };

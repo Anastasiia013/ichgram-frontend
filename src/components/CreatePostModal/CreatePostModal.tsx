@@ -1,15 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../redux/store";
-import { createNewPost } from "../../shared/api/posts-api";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, AppDispatch } from "../../redux/store";
+import { addNewPost } from "../../redux/posts/posts-thunks";
+
 import EmojiPickerButton from "../../layouts/EmojiButton/EmojiButton";
+import GradientAvatar from "../../layouts/GradientAvatar/GradientAvatar";
 
 import styles from "./CreatePostModal.module.css";
 
 const CreatePostModal: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -17,10 +22,7 @@ const CreatePostModal: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const author = useSelector((state: RootState) => state.auth.user);
-
   const token = useSelector((state: RootState) => state.auth.token);
-
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleEmojiInsert = (emoji: string) => {
     const textarea = textareaRef.current;
@@ -68,7 +70,7 @@ const CreatePostModal: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      await createNewPost(formData, token);
+      await dispatch(addNewPost({ formData, token })).unwrap();
       navigate(-1);
     } catch (err) {
       console.error("Ошибка при создании поста:", err);
@@ -119,26 +121,22 @@ const CreatePostModal: React.FC = () => {
               accept="image/*"
               ref={fileInputRef}
               onChange={handleImageChange}
+              style={{ display: "none" }}
             />
           </div>
 
           <div className={styles.infoSection}>
             {author && (
               <div className={styles.authorInfo}>
-                <img
-                  src={author.avatarUrl || "/no-profile-pic-icon-11.jpg"}
-                  alt="avatar"
-                  className={styles.authorAvatar}
-                />
+                <GradientAvatar src={author.avatarUrl} alt="avatar" size={28} />
                 <p>{author.username}</p>
               </div>
             )}
+
             <EmojiPickerButton onSelect={handleEmojiInsert} />
 
-            <form className={styles.form} onSubmit={handleSubmit}>
-              <div className={styles.captionCounter}>
-                {caption.length}/2 200
-              </div>
+            <div className={styles.form}>
+              <div className={styles.captionCounter}>{caption.length}/2200</div>
               <textarea
                 className={styles.textarea}
                 ref={textareaRef}
@@ -147,7 +145,7 @@ const CreatePostModal: React.FC = () => {
                 maxLength={2200}
                 onChange={(e) => setCaption(e.target.value)}
               />
-            </form>
+            </div>
           </div>
         </div>
       </div>
