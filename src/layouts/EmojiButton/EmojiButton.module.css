@@ -1,0 +1,39 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton img {
+  width: 20px;
+  height: 20px;
+}
+
+.picker {
+  position: absolute;
+  bottom: 30px;
+  right: 0;
+  z-index: 1000;
+}
+
+.customEmojiPicker {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.customEmojiPicker > div:first-child {
+  display: none;
+}
+
+.customEmojiPicker > div:last-child {
+  display: none;
+}

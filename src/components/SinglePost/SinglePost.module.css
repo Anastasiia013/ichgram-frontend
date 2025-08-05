@@ -1,0 +1,167 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal {
+    background: white;
+    display: flex;
+    width: 1000px;
+    height: 600px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.photoSection {
+    flex: 1.5;
+    display: flex;
+    /* justify-content: center;
+    align-items: center; */
+}
+
+.photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.postBlock {
+    width: 96%;
+    height: 100%;
+}
+
+.infoSection {
+    flex: 1;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    max-height: 100%;
+}
+
+.scrollableContent {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 16px;
+    /* чтобы не прилипал к bottomBar */
+    min-height: 0;
+}
+
+
+.bottomBar {
+    background-color: white;
+    position: relative;
+    /* не sticky */
+    width: 100%;
+    z-index: 1;
+}
+
+
+.closeBtn {
+    margin-top: auto;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    position: absolute;
+    right: 20px;
+}
+
+.authorInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #EFEFEF;
+}
+
+.authorInfoShort {
+    display: flex;
+    gap: 10px;
+    padding: 10px 20px 20px;
+    align-items: center;
+}
+
+.authorAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.followBtn {
+    color: var(--button-main-blue);
+    font-weight: 600;
+    text-decoration: none;
+    outline: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.followBtn:hover {
+    color: var(--dark-blue-text);
+}
+
+.barLine {
+    border-top: 1px solid #EFEFEF;
+    border-bottom: 1px solid #EFEFEF;
+    width: 100%;
+    padding: 10px 15px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.likes {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.time {
+    font-size: 12px;
+    color: #8e8e8e;
+    margin-bottom: 8px;
+}
+
+.commentForm {
+    display: flex;
+    align-items: center;
+    /* gap: 8px; */
+    padding: 10px;
+}
+
+.commentForm textarea {
+    flex: 1;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;
+    font-family: Roboto, sans-serif;
+    resize: none;
+}
+
+.commentForm button {
+    background: none;
+    border: none;
+    color: #0095f6;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0px 10px;
+}

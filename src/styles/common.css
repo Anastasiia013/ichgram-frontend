@@ -1,0 +1,30 @@
+body {
+    height: 100vh;
+    background-color: var(--white-background);
+    font-family: "Roboto", sans-serif;
+    font-size: var(--main-font-size);
+}
+
+.errorMessage {
+    color: var(--error-message-color);
+    align-self: flex-start;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--grey-text-hover);
+}
+
+h2 {
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: 600;
+    color: var(--grey-text-hover);
+}
+
+h5 {
+    color: var(--grey-text);
+    font-size: 14px;
+    font-weight: 400;
+}

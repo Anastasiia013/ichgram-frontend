@@ -1,0 +1,17 @@
+.appLayout {
+    display: flex;
+    position: relative;
+    height: 100%;
+    /* ключевое */
+    /* height: 100vh; */
+    /* чтобы растянуть на весь экран */
+}
+
+
+.mainContent {
+    flex: 1;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

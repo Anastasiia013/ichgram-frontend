@@ -1,0 +1,28 @@
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 250px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  display: flex;
+}
+
+.panel {
+  background: white;
+  width: 360px;
+  max-width: 90%;
+  height: 100%;
+  padding: 24px;
+  overflow-y: auto;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}

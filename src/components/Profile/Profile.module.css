@@ -1,0 +1,122 @@
+.profilePage {
+  padding: 30px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profileHeader {
+  display: flex;
+  gap: 90px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48px;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.userInfo {
+  display: flex;
+  gap: 6px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.topRow h2 {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.editBtn {
+  padding: 8px 60px;
+  background-color: #efefef;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.editBtn:hover {
+  background-color: #dbdbdb;
+}
+
+.stats {
+  display: flex;
+  gap: 32px;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.bio {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bio strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* .userBio{
+
+} */
+
+.bio a {
+  color: #00376b;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.bio a:hover {
+  text-decoration: underline;
+}
+
+.boldNumber {
+  font-weight: 600;
+}
+
+.bio {
+  font-size: 14px;
+  color: #333;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bioBox {
+  display: flex;
+  align-items: end;
+}
+
+.editButtons {
+  display: flex;
+  gap: 24px;
+}
+
+.saveBtn {
+  font-weight: 600;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: inherit;
+  background-color: var(--button-main-blue);
+  color: white;
+  width: 100px;
+}

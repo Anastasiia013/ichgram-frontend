@@ -1,0 +1,15 @@
+.confirmContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    min-height: 100vh;
+    border-radius: 1px;
+}
+
+.confirmText {
+    font-size: var(--bigger-font-size);
+    color: var(--grey-text);
+    font-weight: 600;
+}

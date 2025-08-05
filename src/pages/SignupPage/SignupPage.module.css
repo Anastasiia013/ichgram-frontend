@@ -1,0 +1,98 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    border-radius: 1px;
+}
+
+.imageSection {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 2rem;
+}
+
+.previewImage {
+    max-height: 600px;
+    object-fit: contain;
+}
+
+.formSection {
+    flex: 1;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #dbdbdb;
+    padding: 30px 40px 20px;
+    text-align: center;
+}
+
+.logo {
+    font-family: 'Billabong', cursive;
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.loginButton {
+    background-color: var(--button-main-blue);
+    color: white;
+    font-weight: 600;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.separatorContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.separator {
+    flex: 1;
+    height: 1px;
+    background-color: #dbdbdb;
+}
+
+.orText {
+    color: #8e8e8e;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.forgotPassword {
+    background: none;
+    border: none;
+    color: var(--dark-blue-text);
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.signupCard {
+    background-color: white;
+    border: 1px solid #dbdbdb;
+    text-align: center;
+    padding: 20px;
+
+}
+
+.signupText {
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--button-main-blue);
+    font-weight: 600;
+}

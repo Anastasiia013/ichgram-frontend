@@ -1,0 +1,143 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    border-radius: 1px;
+}
+
+.imageSection {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 2rem;
+}
+
+.previewImage {
+    max-height: 600px;
+    object-fit: contain;
+}
+
+.formSection {
+    flex: 1;
+    max-width: 390px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #dbdbdb;
+    padding: 30px 40px;
+    text-align: center;
+}
+
+.logo {
+    font-family: 'Billabong', cursive;
+    font-size: 40px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    margin-top: 20px;
+}
+
+.formfields {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.separatorContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.separator {
+    flex: 1;
+    height: 1px;
+    background-color: var(--separator-grey-color);
+}
+
+.orText {
+    color: #8e8e8e;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.link {
+    background: none;
+    border: none;
+    color: var(--dark-blue-text);
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 20px;
+    text-decoration: none;
+}
+
+.signupCard {
+    background-color: white;
+    border: 1px solid var(--separator-grey-color);
+    text-align: center;
+    padding: 20px;
+
+}
+
+.signupText {
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--button-main-blue);
+    font-weight: 600;
+}
+
+.subtitle {
+    color: var(--grey-text);
+    font-weight: 800;
+    padding-bottom: 10px;
+    font-size: var(--bigger-font-size);
+}
+
+.subtitleBlack {
+    color: var(--main-text-color);
+    font-weight: 800;
+    padding-bottom: 10px;
+    font-size: var(--bigger-font-size);
+}
+
+.policyText {
+    font-size: var(--footer-font-size);
+    color: var(--grey-text);
+}
+
+.termsBox {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.backToLogin {
+    width: 100%;
+    border: 1px solid var(--separator-grey-color);
+    padding: 14px;
+    text-align: center;
+}
+
+.backToLoginLink {
+    color: var(--main-text-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.backToLoginLink:hover {
+    color: var(--button-main-blue);
+}
+
+.linkWithoutBorder {
+    padding-top: 16px;
+}

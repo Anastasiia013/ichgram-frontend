@@ -1,0 +1,39 @@
+.avatarWrapper {
+    width: 168px;
+    height: 168px;
+    border-radius: 50%;
+    background: linear-gradient(40deg,
+            #feda75,
+            #fa7e1e,
+            #d62976,
+            #962fbf,
+            #4f5bd5);
+    padding: 6px;
+    display: inline-block;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.avatarWrapper::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    border-radius: 50%;
+    background: white;
+    z-index: 0;
+}
+
+.avatarImage {
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 1;
+    background-color: white;
+    display: block;
+    position: relative;
+    margin: 5px;
+}
