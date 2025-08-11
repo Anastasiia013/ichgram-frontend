@@ -7,12 +7,14 @@ interface PostsState {
   posts: Post[];
   loading: boolean;
   error: string | null;
+  shouldReloadPosts: boolean;
 }
 
 const initialState: PostsState = {
   posts: [],
   loading: false,
   error: null,
+  shouldReloadPosts: false,
 };
 
 const postsSlice = createSlice({
@@ -23,6 +25,9 @@ const postsSlice = createSlice({
       state.posts = [];
       state.error = null;
       state.loading = false;
+    },
+    setShouldReloadPosts(state, action: PayloadAction<boolean>) {
+      state.shouldReloadPosts = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -57,6 +62,5 @@ const postsSlice = createSlice({
       });
   },
 });
-
-export const { clearPosts } = postsSlice.actions;
+export const { clearPosts, setShouldReloadPosts } = postsSlice.actions;
 export default postsSlice.reducer;

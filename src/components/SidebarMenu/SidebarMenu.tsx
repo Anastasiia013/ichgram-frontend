@@ -9,48 +9,18 @@ import Button from "../../layouts/Button/Button";
 
 import styles from "./SidebarMenu.module.css";
 
-const menuItems = [
-  {
-    label: "Home",
-    icon: "/sidebar/icon-home.svg",
-    iconFilled: "/sidebar/icon-home-filled.svg",
-  },
-  {
-    label: "Search",
-    icon: "/sidebar/icon-search.svg",
-    iconFilled: "/sidebar/icon-search-filled.svg",
-  },
-  {
-    label: "Explore",
-    icon: "/sidebar/icon-explore.svg",
-    iconFilled: "/sidebar/icon-explore-filled.svg",
-  },
-  {
-    label: "Messages",
-    icon: "/sidebar/icon-messages.svg",
-    iconFilled: "/sidebar/icon-messages-filled.svg",
-  },
-  {
-    label: "Notification",
-    icon: "/sidebar/icon-notification.svg",
-    iconFilled: "/sidebar/icon-notification-filled.svg",
-  },
-  {
-    label: "Create",
-    icon: "/sidebar/icon-createpost.svg",
-    iconFilled: "/sidebar/icon-createpost.svg",
-  },
-  {
-    label: "Profile",
-    icon: "/sidebar/icon-ichlogo.png",
-    iconFilled: "/sidebar/icon-ichlogo.png",
-    isAvatar: true,
-  },
-];
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
 interface SidebarProps {
   onToggleNotifications: () => void;
   onToggleSearch: () => void;
+}
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  iconFilled: string;
+  isAvatar?: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -71,41 +41,75 @@ const Sidebar: React.FC<SidebarProps> = ({
   const handleClick = (label: string, e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (label === "Notification") {
-      onToggleNotifications();
-      return;
-    }
-
-    if (label === "Search") {
-      onToggleSearch();
-      return;
-    }
-
-    if (label === "Explore") {
-      navigate("/explore");
-      return;
-    }
-
-    if (label === "Create") {
-      navigate("/create-new-post", {
-        state: {
-          background: {
-            pathname: location.pathname,
-            search: location.search,
-            hash: location.hash,
+    switch (label) {
+      case "Home":
+        navigate("/dashboard");
+        break;
+      case "Notification":
+        onToggleNotifications();
+        break;
+      case "Search":
+        onToggleSearch();
+        break;
+      case "Explore":
+        navigate("/explore");
+        break;
+      case "Create":
+        navigate("/create-new-post", {
+          state: {
+            background: {
+              pathname: location.pathname,
+              search: location.search,
+              hash: location.hash,
+            },
           },
-        },
-      });
-
-      return;
-    }
-
-    if (label === "Profile") {
-      if (!currentUser) return;
-      navigate(`/users/${currentUser.username}`);
-      return;
+        });
+        break;
+      case "Profile":
+        if (!currentUser) return;
+        navigate(`/users/${currentUser.username}`);
+        break;
     }
   };
+
+  const menuItems: MenuItem[] = [
+    {
+      label: "Home",
+      icon: "/sidebar/icon-home.svg",
+      iconFilled: "/sidebar/icon-home-filled.svg",
+    },
+    {
+      label: "Search",
+      icon: "/sidebar/icon-search.svg",
+      iconFilled: "/sidebar/icon-search-filled.svg",
+    },
+    {
+      label: "Explore",
+      icon: "/sidebar/icon-explore.svg",
+      iconFilled: "/sidebar/icon-explore-filled.svg",
+    },
+    {
+      label: "Messages",
+      icon: "/sidebar/icon-messages.svg",
+      iconFilled: "/sidebar/icon-messages-filled.svg",
+    },
+    {
+      label: "Notification",
+      icon: "/sidebar/icon-notification.svg",
+      iconFilled: "/sidebar/icon-notification-filled.svg",
+    },
+    {
+      label: "Create",
+      icon: "/sidebar/icon-createpost.svg",
+      iconFilled: "/sidebar/icon-createpost.svg",
+    },
+    {
+      label: "Profile",
+      icon: "/no-profile-pic-icon-11.jpg",
+      iconFilled: "/no-profile-pic-icon-11.jpg",
+      isAvatar: true,
+    },
+  ];
 
   return (
     <aside className={styles.sidebar}>
@@ -114,23 +118,33 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <nav className={styles.nav}>
-        {menuItems.map(({ label, icon, iconFilled, isAvatar }) => (
-          <a
-            href="#"
-            className={styles.navItem}
-            key={label}
-            onMouseEnter={() => setHoveredItem(label)}
-            onMouseLeave={() => setHoveredItem(null)}
-            onClick={(e) => handleClick(label, e)}
-          >
-            <img
-              src={hoveredItem === label ? iconFilled : icon}
-              alt={label}
-              className={isAvatar ? styles.avatarIcon : styles.icon}
-            />
-            <span>{label}</span>
-          </a>
-        ))}
+        {menuItems.map(({ label, icon, iconFilled, isAvatar }) => {
+          const imgSrc = isAvatar
+            ? currentUser?.avatarUrl
+              ? `${BACKEND_URL}${currentUser.avatarUrl}`
+              : icon
+            : hoveredItem === label
+            ? iconFilled
+            : icon;
+
+          return (
+            <a
+              href="#"
+              className={styles.navItem}
+              key={label}
+              onMouseEnter={() => setHoveredItem(label)}
+              onMouseLeave={() => setHoveredItem(null)}
+              onClick={(e) => handleClick(label, e)}
+            >
+              <img
+                src={imgSrc}
+                alt={label}
+                className={isAvatar ? styles.avatarIcon : styles.icon}
+              />
+              <span>{label}</span>
+            </a>
+          );
+        })}
       </nav>
 
       <div className={styles.logoutWrapper}>

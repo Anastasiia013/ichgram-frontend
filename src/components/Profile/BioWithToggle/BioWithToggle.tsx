@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import styles from "./BioWithToggle.module.css";
 
-const clampLength = 110;
+const clampLength = 130;
 
 interface BioWithToggleProps {
-  text: string;
+  text: string | undefined;
 }
 
 const BioWithToggle: React.FC<BioWithToggleProps> = ({ text }) => {

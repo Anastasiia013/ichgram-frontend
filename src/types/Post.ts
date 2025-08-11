@@ -1,14 +1,14 @@
+import type { User } from "./User";
+import type { Comment } from "./Comment";
+
 export interface Post {
   _id: string;
-  author: string;
+  author: User;
   imageUrl: string;
   caption?: string;
   likes: {
     username: string;
   }[];
-  comments?: {
-    username: string;
-    text: string;
-  }[];
+  comments?: Comment[];
   createdAt: string;
 }

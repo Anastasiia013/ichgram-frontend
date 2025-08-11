@@ -1,8 +1,9 @@
 .overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 250px;
+  /* если у тебя есть сайдбар шириной 250px */
   right: 0;
   background: rgba(0, 0, 0, 0.3);
   z-index: 50;

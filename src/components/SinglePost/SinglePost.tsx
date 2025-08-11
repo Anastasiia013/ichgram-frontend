@@ -1,23 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useRef } from "react";
-
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
 
-import { getPostById } from "../../shared/api/posts-api";
-import { getUserById } from "../../shared/api/profile-api";
+import { getPostById, addCommentToPost } from "../../shared/api/posts-api";
 import type { Post } from "../../types/Post";
 import type { User } from "../../types/User";
-import EmojiPickerButton from "../../layouts/EmojiButton/EmojiButton";
 import GradientAvatar from "../../layouts/GradientAvatar/GradientAvatar";
+import PostComments from "./PostComments/PostComments";
+import EmojiPickerButton from "../../layouts/EmojiButton/EmojiButton";
+import PostActionsModal from "./PostActionsModal/PostActionsModal";
+import EditPostModal from "../EditPostModal/EditPostModal";
 
 import styles from "./SinglePost.module.css";
-
 import { isToday, isYesterday, differenceInDays } from "date-fns";
-
 import { useFollow } from "../../shared/hooks/useFollow";
-import { useLike } from "../../shared/hooks/useLike";
+import { useLikePost } from "../../shared/hooks/useLikePost";
+import { useLikeComment } from "../../shared/hooks/useLikeComment";
+
+export const getDateLabel = (createdAt: string): string => {
+  const date = new Date(createdAt);
+
+  if (isToday(date)) return "Today";
+  if (isYesterday(date)) return "Yesterday";
+
+  const daysAgo = differenceInDays(new Date(), date);
+  return `${daysAgo} ${daysAgo === 1 ? "Day" : "Days"}`;
+};
 
 const SinglePost: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -27,18 +36,57 @@ const SinglePost: React.FC = () => {
   const [author, setAuthor] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showActions, setShowActions] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [commentText, setCommentText] = useState("");
-  const currentUser =
-    useSelector((state: RootState) => state.auth.user) || null;
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const { isFollowing, handleFollow, handleUnfollow } = useFollow(
     author,
     setAuthor
   );
 
-  const { isLiked, handleLike, handleUnlike } = useLike(post, setPost);
+  const {
+    isLiked,
+    handleLike,
+    handleUnlike,
+    isProcessing: isPostProcessing,
+  } = useLikePost(post, setPost);
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const {
+    isCommentLiked,
+    handleLikeComment,
+    handleUnlikeComment,
+    isProcessing: isCommentProcessing,
+  } = useLikeComment(post, setPost);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    const fetchPost = async () => {
+      try {
+        if (!postId) return;
+        const data = await getPostById(postId);
+        setPost(data);
+        setAuthor(data.author);
+      } catch (err) {
+        setError("Ошибка при загрузке поста");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [postId]);
 
   const handleEmojiInsert = (emoji: string) => {
     const textarea = textareaRef.current;
@@ -59,46 +107,27 @@ const SinglePost: React.FC = () => {
     });
   };
 
-  const getDateLabel = (createdAt: string): string => {
-    const date = new Date(createdAt);
+  const handleAddComment = async () => {
+    if (!commentText.trim() || !currentUser || !post || !token) return;
 
-    if (isToday(date)) return "Today";
-    if (isYesterday(date)) return "Yesterday";
+    try {
+      const newComment = await addCommentToPost(
+        post._id,
+        commentText.trim(),
+        token
+      );
 
-    const daysAgo = differenceInDays(new Date(), date);
-    return `${daysAgo} ${daysAgo === 1 ? "Day" : "Days"}`;
+      setPost((prev) =>
+        prev
+          ? { ...prev, comments: [...(prev.comments || []), newComment] }
+          : prev
+      );
+
+      setCommentText("");
+    } catch (error) {
+      console.error("Ошибка при добавлении комментария", error);
+    }
   };
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-
-    const fetchPost = async () => {
-      try {
-        if (!postId) return;
-        const data = await getPostById(postId);
-
-        const normalizedPost = {
-          ...data,
-          comments: data.comments || [],
-        };
-        setPost(normalizedPost);
-
-        const authorData = await getUserById(data.author);
-        setAuthor(authorData);
-      } catch (err) {
-        setError("Ошибка при загрузке поста");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPost();
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [postId]);
 
   const onClose = () => {
     navigate(-1);
@@ -135,12 +164,22 @@ const SinglePost: React.FC = () => {
           <div className={styles.scrollableContent}>
             {author && (
               <div className={styles.authorInfo}>
-                <GradientAvatar
-                  src={author.avatarUrl || "/no-profile-pic-icon-11.jpg"}
-                  alt="avatar"
-                  size={28}
-                />
-                <p>{author.username}</p>
+                <Link
+                  to={`/profile/${author.username}`}
+                  className={styles.authorLink}
+                >
+                  <GradientAvatar
+                    src={author.avatarUrl || "/no-profile-pic-icon-11.jpg"}
+                    alt="avatar"
+                    size={28}
+                  />
+                </Link>
+                <Link
+                  to={`/profile/${author.username}`}
+                  className={styles.authorLink}
+                >
+                  <strong>{author.username}</strong>
+                </Link>
 
                 {currentUser && currentUser._id !== author._id && (
                   <>
@@ -153,11 +192,17 @@ const SinglePost: React.FC = () => {
                     </button>
                   </>
                 )}
-                <button className={styles.closeBtn} onClick={onClose}>
-                  <img src="/x-lg.svg" alt="Close Post" />
-                </button>
+                {currentUser && currentUser._id === author._id && (
+                  <button
+                    onClick={() => setShowActions(true)}
+                    className={styles.moreBtn}
+                  >
+                    <img src="/more-actions-btn.svg" alt="More" />
+                  </button>
+                )}
               </div>
             )}
+
             <div className={styles.postBlock}>
               {author && (
                 <div className={styles.authorInfoShort}>
@@ -167,14 +212,31 @@ const SinglePost: React.FC = () => {
                     size={28}
                   />
                   <span className={styles.userPost}>
-                    <p>
-                      {author.username} {post.caption || "Без описания"}
+                    <p style={{ cursor: "default" }}>
+                      <strong>{author.username}</strong>{" "}
+                      {post.caption || "Без описания"}
                     </p>
                   </span>
                 </div>
               )}
             </div>
+
+            {/* Комментарии */}
+            <PostComments
+              comments={post.comments || []}
+              currentUser={currentUser}
+              likedCommentsIds={
+                post.comments
+                  ?.filter((comment) =>
+                    isCommentLiked(comment, currentUser?._id || "")
+                  )
+                  .map((c) => c._id) || []
+              }
+              onLikeComment={handleLikeComment}
+              onUnlikeComment={handleUnlikeComment}
+            />
           </div>
+
           <div className={styles.bottomBar}>
             <div className={styles.barLine}>
               <div className={styles.actions}>
@@ -182,7 +244,16 @@ const SinglePost: React.FC = () => {
                   src={isLiked ? "/like-filled.svg" : "/like-con.svg"}
                   alt="Like"
                   className={styles.icon}
-                  onClick={isLiked ? handleUnlike : handleLike}
+                  onClick={
+                    isPostProcessing
+                      ? undefined
+                      : isLiked
+                      ? handleUnlike
+                      : handleLike
+                  }
+                  style={{
+                    cursor: isPostProcessing ? "not-allowed" : "pointer",
+                  }}
                 />
 
                 <img
@@ -195,25 +266,12 @@ const SinglePost: React.FC = () => {
               <p className={styles.likes}>{post.likes?.length || 0} лайков</p>
               <p className={styles.time}>{getDateLabel(post.createdAt)}</p>
             </div>
+
             <form
               className={styles.commentForm}
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                if (!commentText.trim()) return;
-
-                const newComment = {
-                  username: currentUser?.username || "Unknown User",
-                  text: commentText.trim(),
-                };
-                setPost((prev) =>
-                  prev
-                    ? {
-                        ...prev,
-                        comments: [...(prev.comments || []), newComment],
-                      }
-                    : prev
-                );
-                setCommentText("");
+                await handleAddComment();
               }}
             >
               <EmojiPickerButton onSelect={handleEmojiInsert} />
@@ -222,14 +280,44 @@ const SinglePost: React.FC = () => {
                 placeholder="Add comment"
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
+                disabled={isCommentProcessing}
               />
 
-              <button type="submit" disabled={!commentText.trim()}>
+              <button
+                type="submit"
+                disabled={!commentText.trim() || isCommentProcessing}
+              >
                 Send
               </button>
             </form>
           </div>
         </div>
+
+        {showActions && (
+          <PostActionsModal
+            postId={post._id}
+            onClose={() => setShowActions(false)}
+            onEditClick={() => {
+              setShowActions(false);
+              setIsEditing(true);
+            }}
+            onDeleted={async () => {
+              setShowActions(false);
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              navigate(`/users/${author?.username}`);
+            }}
+          />
+        )}
+
+        {isEditing && (
+          <EditPostModal
+            postId={post._id}
+            initialCaption={post.caption || ""}
+            previewUrl={post.imageUrl}
+            onClose={() => setIsEditing(false)}
+            onSaved={(updatedPost) => setPost(updatedPost)}
+          />
+        )}
       </div>
     </div>
   );

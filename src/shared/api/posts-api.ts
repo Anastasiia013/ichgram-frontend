@@ -6,7 +6,6 @@ const API_ORIGIN = import.meta.env.VITE_API_URL.replace("/api", "");
 export const getExplorePosts = async () => {
   const { data } = await backendInstance.get("/posts/explore");
 
-  // Добавляем базовый адрес к imageUrl
   const normalized = data.map((post: any) => ({
     ...post,
     imageUrl: `${API_ORIGIN}${post.imageUrl}`,
@@ -18,7 +17,6 @@ export const getExplorePosts = async () => {
 export const getPostsByUsername = async (username: string): Promise<Post[]> => {
   const res = await backendInstance.get(`/posts/${username}/posts`);
 
-  // Добавляем базовый адрес к imageUrl
   const normalized = res.data.map((post: any) => ({
     ...post,
     imageUrl: `${API_ORIGIN}${post.imageUrl}`,
@@ -29,9 +27,10 @@ export const getPostsByUsername = async (username: string): Promise<Post[]> => {
 
 export const getPostById = async (postId: string): Promise<Post> => {
   const { data } = await backendInstance.get(`/posts/${postId}`);
+
   return {
     ...data,
-    imageUrl: `${API_ORIGIN}${data.imageUrl}`, // 👈 вот это важно
+    imageUrl: `${API_ORIGIN}${data.imageUrl}`,
   };
 };
 
@@ -52,7 +51,6 @@ export const unlikePost = async (postId: string, token: string) => {
   );
   return data;
 };
-
 export const likeComment = async (
   postId: string,
   commentId: string,
@@ -63,6 +61,7 @@ export const likeComment = async (
     {},
     { headers: { Authorization: `Bearer ${token}` } }
   );
+  
   return data;
 };
 
@@ -95,4 +94,55 @@ export const createNewPost = async (
   );
 
   return response.data as Post;
+};
+
+export const deletePost = async (postId: string, token: string) => {
+  await backendInstance.delete(`/posts/${postId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const editPost = async (
+  postId: string,
+  caption: string,
+  token: string
+): Promise<Post> => {
+  const { data } = await backendInstance.put(
+    `/posts/${postId}/edit`,
+    { caption },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return {
+    ...data,
+    imageUrl: `${API_ORIGIN}${data.imageUrl}`,
+  };
+};
+
+export async function getFeedPosts(token: string) {
+  const response = await backendInstance.get("/posts/dashboard", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
+
+export const addCommentToPost = async (
+  postId: string,
+  text: string,
+  token: string
+) => {
+  const response = await backendInstance.post(
+    `/posts/${postId}/comments`,
+    { text },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
 };

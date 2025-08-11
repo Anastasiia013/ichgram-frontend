@@ -1,0 +1,56 @@
+.commentsList {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    /* отступы между комментариями */
+    max-height: 300px;
+    /* по желанию — ограничение по высоте с прокруткой */
+    overflow-y: auto;
+    padding-right: 8px;
+    /* для скролла */
+}
+
+.comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.commentContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    word-break: break-word;
+}
+
+.commentContent strong {
+    font-weight: 600;
+    font-size: 14px;
+    color: #222;
+}
+
+.commentContent p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.likeButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.likeButton img {
+    width: 18px;
+    height: 18px;
+    user-select: none;
+    pointer-events: none;
+}

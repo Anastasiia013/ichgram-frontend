@@ -4,22 +4,34 @@ import type { RootState } from "../../redux/store";
 import type { Post } from "../../types/Post";
 import { likePost, unlikePost, getPostById } from "../api/posts-api";
 
-export const useLike = (post: Post | null, setPost?: (post: Post) => void) => {
+export const useLikePost = (
+  post: Post | null,
+  setPost?: (post: Post) => void
+) => {
   const currentUser = useSelector((state: RootState) => state.auth.user);
   const token = useSelector((state: RootState) => state.auth.token);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const isLiked = !!(
     post &&
-    currentUser?._id &&
-    post.likes.some((id) => id.toString() === currentUser._id)
+    currentUser &&
+    Array.isArray(post.likes) &&
+    post.likes.some((like) => {
+      if (typeof like === "string") {
+        return like === currentUser._id.toString();
+      }
+      if (like && typeof like === "object" && "_id" in like) {
+        return (like._id as any).toString() === currentUser._id.toString();
+      }
+      return false;
+    })
   );
 
   const syncPost = useCallback(async () => {
     if (!post) return;
     try {
       const updated = await getPostById(post._id);
-      if (setPost) setPost(updated);
+      setPost?.(updated);
     } catch (err) {
       console.error("Ошибка при синхронизации поста:", err);
     }

@@ -10,7 +10,7 @@
 
 .mainContent {
     flex: 1;
-    padding: 32px;
+    padding: 36px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

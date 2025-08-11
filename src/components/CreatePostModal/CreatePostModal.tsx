@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../redux/store";
 import { addNewPost } from "../../redux/posts/posts-thunks";
+import { setShouldReloadPosts } from "../../redux/posts/posts-slice";
 
 import EmojiPickerButton from "../../layouts/EmojiButton/EmojiButton";
 import GradientAvatar from "../../layouts/GradientAvatar/GradientAvatar";
@@ -61,23 +62,25 @@ const CreatePostModal: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedImage || !caption.trim()) return;
+  e.preventDefault();
+  if (!selectedImage || !caption.trim()) return;
 
-    const formData = new FormData();
-    formData.append("image", selectedImage);
-    formData.append("caption", caption);
+  const formData = new FormData();
+  formData.append("image", selectedImage);
+  formData.append("caption", caption);
 
-    try {
-      setIsSubmitting(true);
-      await dispatch(addNewPost({ formData, token })).unwrap();
-      navigate(-1);
-    } catch (err) {
-      console.error("Ошибка при создании поста:", err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  try {
+    setIsSubmitting(true);
+    await dispatch(addNewPost({ formData, token })).unwrap();
+    // Пост успешно создан — поднять флаг, чтобы профиль обновил посты
+    dispatch(setShouldReloadPosts(true));
+    navigate(-1);
+  } catch (err) {
+    console.error("Ошибка при создании поста:", err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className={styles.overlay} onClick={handleClose}>

@@ -6,6 +6,7 @@ import type { AppDispatch, RootState } from "../../redux/store";
 import { useFollow } from "../../shared/hooks/useFollow";
 import { getUserByUsername } from "../../shared/api/profile-api";
 import { fetchPostsByUsername } from "../../redux/posts/posts-thunks";
+import { setShouldReloadPosts } from "../../redux/posts/posts-slice";
 
 import type { User } from "../../types/User";
 import GradientAvatar from "../../layouts/GradientAvatar/GradientAvatar";
@@ -19,6 +20,10 @@ const Profile = () => {
   const { username } = useParams<{ username: string }>();
   const [user, setUser] = useState<User | null>(null);
 
+  const shouldReloadPosts = useSelector(
+    (state: RootState) => state.posts.shouldReloadPosts
+  );
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -31,6 +36,13 @@ const Profile = () => {
     user,
     setUser
   );
+
+  useEffect(() => {
+    if (shouldReloadPosts && username) {
+      dispatch(fetchPostsByUsername(username));
+      dispatch(setShouldReloadPosts(false));
+    }
+  }, [shouldReloadPosts, dispatch, username]);
 
   useEffect(() => {
     if (!username) return;

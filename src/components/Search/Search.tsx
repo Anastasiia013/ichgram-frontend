@@ -35,7 +35,6 @@ const Search: React.FC<Props> = ({ isOpen, onClose }) => {
     const timeout = setTimeout(async () => {
       try {
         const data = await searchUsers(query);
-        console.log(data);
         setResults(data);
       } catch (err) {
         console.error("Ошибка при поиске:", err);
@@ -56,7 +55,6 @@ const Search: React.FC<Props> = ({ isOpen, onClose }) => {
     navigate(`/users/${user.username}`);
     onClose();
 
-    // Обновить список последних (без дубля)
     setRecentSearches((prev) => {
       const exists = prev.find((u) => u._id === user._id);
       if (exists) {

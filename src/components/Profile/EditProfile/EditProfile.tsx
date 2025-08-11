@@ -93,8 +93,8 @@ const EditProfile = () => {
           </label>
 
           <div className={styles.userInfo}>
-            <p>{fullname}</p>
-            <p>{bio}</p>
+            <p className={styles.userFullname}>{fullname}</p>
+            <p className={styles.userBio}>{bio}</p>
           </div>
         </div>
         <Button
