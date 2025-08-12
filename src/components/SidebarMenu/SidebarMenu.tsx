@@ -14,6 +14,8 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 interface SidebarProps {
   onToggleNotifications: () => void;
   onToggleSearch: () => void;
+  onToggleMessages: () => void;
+  onClosePanels: () => void;
 }
 
 interface MenuItem {
@@ -26,6 +28,8 @@ interface MenuItem {
 const Sidebar: React.FC<SidebarProps> = ({
   onToggleNotifications,
   onToggleSearch,
+  onToggleMessages,
+  onClosePanels,
 }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
@@ -44,6 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     switch (label) {
       case "Home":
         navigate("/dashboard");
+        onClosePanels();
         break;
       case "Notification":
         onToggleNotifications();
@@ -53,6 +58,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         break;
       case "Explore":
         navigate("/explore");
+        onClosePanels();
+        break;
+      case "Messages":  
+        onToggleMessages();
         break;
       case "Create":
         navigate("/create-new-post", {
@@ -68,6 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       case "Profile":
         if (!currentUser) return;
         navigate(`/users/${currentUser.username}`);
+        onClosePanels();
         break;
     }
   };

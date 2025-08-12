@@ -10,6 +10,7 @@ import Navigation from "../Navigation";
 import Footer from "../Footer/Footer";
 import Sidebar from "../SidebarMenu/SidebarMenu";
 import NotificationsPanel from "../NotificationsPanel/NotificationsPanel";
+import MessagesPanel from "../MessagesPanel/MessagesPanel";
 import Search from "../Search/Search";
 
 import { setAuthHeader } from "../../shared/api/setAuthHeader";
@@ -25,11 +26,11 @@ function App() {
   const navigate = useNavigate();
   const token = useSelector(selectToken);
 
-  const [openPanel, setOpenPanel] = useState<"notifications" | "search" | null>(
-    null
-  );
+  const [openPanel, setOpenPanel] = useState<
+    "notifications" | "search" | "messages" | null
+  >(null);
 
-  const togglePanel = (panel: "notifications" | "search") => {
+  const togglePanel = (panel: "notifications" | "search" | "messages") => {
     setOpenPanel((prev) => (prev === panel ? null : panel));
   };
 
@@ -59,11 +60,20 @@ function App() {
           <Sidebar
             onToggleNotifications={() => togglePanel("notifications")}
             onToggleSearch={() => togglePanel("search")}
+            onToggleMessages={() => togglePanel("messages")}
+            onClosePanels={() => setOpenPanel(null)}
           />
 
           <NotificationsPanel
             isOpen={openPanel === "notifications"}
             onClose={() => setOpenPanel(null)}
+            token={token}
+          />
+
+          <MessagesPanel
+            isOpen={openPanel === "messages"}
+            onClose={() => setOpenPanel(null)}
+            token={token}
           />
 
           <Search

@@ -1,0 +1,50 @@
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.item:hover {
+    background-color: #f0f0f0;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.chatInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.fullname {
+    font-weight: bold;
+}
+
+.lastMessage {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.time {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.empty {
+    text-align: center;
+    color: #888;
+    padding: 10px;
+}
