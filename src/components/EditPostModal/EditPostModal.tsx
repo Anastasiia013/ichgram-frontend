@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../redux/store"
-import { editPost } from "../../shared/api/posts-api"
+import type { RootState } from "../../redux/store";
+import { editPost } from "../../shared/api/posts-api";
 import EmojiPickerButton from "../../layouts/EmojiButton/EmojiButton";
 import GradientAvatar from "../../layouts/GradientAvatar/GradientAvatar";
 import type { Post } from "../../types/Post";
 
-import styles from "../../components/CreatePostModal/CreatePostModal.module.css"
+import styles from "../../components/CreatePostModal/CreatePostModal.module.css";
 
 type Props = {
   postId: string;
@@ -28,6 +28,7 @@ const EditPostModal: React.FC<Props> = ({
 
   const [caption, setCaption] = useState(initialCaption);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -57,15 +58,32 @@ const EditPostModal: React.FC<Props> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!caption.trim()) return;
+    if (!caption.trim()) {
+      setError("Caption cannot be empty");
+      return;
+    }
+
+    if (!token) {
+      setError("You are not authorized");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
     try {
-      setIsSubmitting(true);
-      if (!token) throw new Error("No token");
       const updated = await editPost(postId, caption.trim(), token);
+
+      // Проверка типа на всякий случай
+      if (!updated || !updated.imageUrl) {
+        throw new Error("Invalid post data received from server");
+      }
+
       onSaved(updated);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Ошибка при редактировании поста:", err);
+      setError(err.message || "Error updating post");
     } finally {
       setIsSubmitting(false);
     }
@@ -93,6 +111,8 @@ const EditPostModal: React.FC<Props> = ({
             {isSubmitting ? "Saving..." : "Save"}
           </button>
         </div>
+
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
         <div className={styles.modal}>
           <div className={styles.photoSection}>

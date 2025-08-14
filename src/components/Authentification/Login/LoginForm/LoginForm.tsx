@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSelector } from "react-redux";
@@ -32,35 +32,37 @@ const LoginForm: React.FC<LoginFormProps> = ({ submitForm }) => {
     register,
     handleSubmit,
     reset,
-    setError,
-    clearErrors,
     control,
     formState: { errors },
   } = useForm<LoginFormInputs>({
     resolver: yupResolver(loginSchema),
-    mode: "onChange",
+    mode: "onChange", // оставляем onChange для Yup
   });
 
-  useFieldValidation({ control, setError, clearErrors });
+  useFieldValidation({ control, setError: () => {}, clearErrors: () => {} });
+
+  // отдельное состояние для ошибок сервера
+  const [serverError, setServerError] = useState<{
+    field: keyof LoginFormInputs;
+    message: string;
+  } | null>(null);
 
   const onSubmit = async (data: LoginFormInputs) => {
+    setServerError(null); // сбрасываем перед новым сабмитом
     const result = await submitForm(data);
 
     if (result.success) {
       reset();
     } else if (result.error) {
-      const msg = result.error.toLowerCase();
-      if (
-        msg.includes("identifier") ||
-        msg.includes("email") ||
-        msg.includes("username")
-      ) {
-        setError("identifier", { type: "server", message: result.error });
-      } else if (msg.includes("password")) {
-        setError("password", { type: "server", message: result.error });
-      } else {
-        setError("identifier", { type: "server", message: result.error });
-      }
+      // определяем поле для ошибки
+      const field: keyof LoginFormInputs = result.error
+        .toLowerCase()
+        .includes("password")
+        ? "password"
+        : "identifier";
+
+      // сохраняем серверную ошибку отдельно
+      setServerError({ field, message: result.error });
     }
   };
 
@@ -72,8 +74,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ submitForm }) => {
           type="text"
           {...register("identifier")}
         />
+        {/* Ошибки Yup */}
         {errors.identifier && (
           <p className="errorMessage">{errors.identifier.message}</p>
+        )}
+        {/* Ошибки сервера */}
+        {serverError?.field === "identifier" && (
+          <p className="errorMessage">{serverError.message}</p>
         )}
 
         <TextField
@@ -83,6 +90,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ submitForm }) => {
         />
         {errors.password && (
           <p className="errorMessage">{errors.password.message}</p>
+        )}
+        {serverError?.field === "password" && (
+          <p className="errorMessage">{serverError.message}</p>
         )}
       </div>
 

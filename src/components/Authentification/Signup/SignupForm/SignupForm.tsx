@@ -27,9 +27,7 @@ interface SignupFormProps {
   loading: boolean;
 }
 
-const SignupForm: React.FC<SignupFormProps> = ({
-  submitForm,
-}) => {
+const SignupForm: React.FC<SignupFormProps> = ({ submitForm }) => {
   const { loading: authLoading } = useSelector(selectAuth);
 
   const {
@@ -94,7 +92,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
         <p className={styles.policyText}>
           People who use our service may have uploaded your contact information
           to Instagram.{" "}
-          <a href="" target="_blank" className={styles.link}>
+          <a href="/privacy-policy" target="_blank" className={styles.link}>
             Learn More
           </a>
         </p>

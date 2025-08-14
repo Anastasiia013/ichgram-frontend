@@ -14,6 +14,7 @@ import MainPage from "../pages/MainPage/MainPage";
 import ExplorePage from "../pages/ExplorePage/ExplorePage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import EditProfilePage from "../pages/EditProfilePage/EditProfilePage";
+import MessagesPage from "../pages/MessagesPage/MessagesPage";
 
 import SinglePost from "./SinglePost/SinglePost";
 import CreatePostModal from "./CreatePostModal/CreatePostModal";
@@ -49,8 +50,12 @@ const Navigation = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<MainPage />} />
           <Route path="/users/:username" element={<ProfilePage />} />
-          <Route path="/users/:username/edit-my-profile" element={<EditProfilePage />} />
+          <Route
+            path="/users/:username/edit-my-profile"
+            element={<EditProfilePage />}
+          />
           <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/messages" element={<MessagesPage />} />
 
           <Route path="/*" element={<NotFoundPage />} />
         </Route>

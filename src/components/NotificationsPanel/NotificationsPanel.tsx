@@ -18,7 +18,7 @@ interface Notification {
   type: "like" | "comment" | "follow" | "likeOnComment";
   post?: {
     _id: string;
-    imageUrl: string;
+    imageUrl?: string;
   };
   isRead: boolean;
   createdAt: string;
@@ -38,18 +38,18 @@ const NotificationsPanel: React.FC<Props> = ({ isOpen, onClose, token }) => {
   useEffect(() => {
     if (!token) return;
 
-    // Декодируем токен, чтобы достать userId
     const { id: userId } = jwtDecode<{ id: string }>(token);
     const socket: Socket = io(import.meta.env.VITE_SOCKET_URL, {
       auth: { token },
     });
 
     socket.emit("join", userId);
-    const decoded = jwtDecode(token);
-    console.log("Decoded token:", decoded);
 
     socket.on("newNotification", (notification: Notification) => {
-      setNotifications((prev) => [notification, ...prev]);
+      setNotifications((prev) => {
+        if (prev.some((n) => n._id === notification._id)) return prev;
+        return [notification, ...prev];
+      });
     });
 
     return () => {
@@ -58,25 +58,24 @@ const NotificationsPanel: React.FC<Props> = ({ isOpen, onClose, token }) => {
   }, [token]);
 
   useEffect(() => {
-    if (isOpen) {
-      getNotifications(token)
-        .then((data) => {
-          const normalizedNotifications = data.map((n) => ({
-            ...n,
-            post:
-              typeof n.post === "string"
-                ? { _id: n.post, imageUrl: "" }
-                : n.post,
-          }));
-          const uniqueNotifications = Array.from(
-            new Map(normalizedNotifications.map((n) => [n._id, n])).values()
-          );
-          setNotifications(uniqueNotifications);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch notifications:", err);
-        });
-    }
+    if (!isOpen) return;
+
+    getNotifications(token)
+      .then((data) => {
+        const normalized = data.map((n) => ({
+          ...n,
+          post:
+            typeof n.post === "string" ? { _id: n.post, imageUrl: "" } : n.post,
+        }));
+
+        // Убираем дубликаты по _id уведомления
+        const unique = Array.from(
+          new Map(normalized.map((n) => [n._id, n])).values()
+        );
+
+        setNotifications(unique);
+      })
+      .catch((err) => console.error("Failed to fetch notifications:", err));
   }, [isOpen, token]);
 
   if (!isOpen) return null;
@@ -90,6 +89,21 @@ const NotificationsPanel: React.FC<Props> = ({ isOpen, onClose, token }) => {
     if (!postId) return;
     onClose();
     navigate(`/posts/${postId}`, { state: { background: location } });
+  };
+
+  const renderNotificationText = (n: Notification) => {
+    switch (n.type) {
+      case "like":
+        return "liked your post.";
+      case "comment":
+        return "commented on your post.";
+      case "follow":
+        return "started following you.";
+      case "likeOnComment":
+        return "liked your comment.";
+      default:
+        return "";
+    }
   };
 
   return (
@@ -106,27 +120,29 @@ const NotificationsPanel: React.FC<Props> = ({ isOpen, onClose, token }) => {
                   onClick={() => handleGoToUser(n.sender.username)}
                   style={{ cursor: "pointer" }}
                   src={
-                    `${API_ORIGIN}${n.sender.avatarUrl}` ||
-                    "/no-profile-pic-icon-11.jpg"
+                    n.sender.avatarUrl
+                      ? `${API_ORIGIN}${n.sender.avatarUrl}`
+                      : "/no-profile-pic-icon-11.jpg"
                   }
                   alt="avatar"
                   className={styles.avatar}
                 />
                 <div className={styles.text}>
                   <span className={styles.username}>{n.sender.username}</span>{" "}
-                  {n.type === "like" && "liked your post."}
-                  {n.type === "comment" && "commented on your post."}
-                  {n.type === "follow" && "started following you."}
-                  {n.type === "likeOnComment" && "liked your comment."}
+                  {renderNotificationText(n)}
                   <span className={styles.time}>
                     {getDateLabel(n.createdAt)}
                   </span>
                 </div>
-                {n.post?.imageUrl && (
+                {n.post?._id && (
                   <img
                     onClick={() => handleGoToPost(n.post?._id)}
                     style={{ cursor: "pointer" }}
-                    src={`${API_ORIGIN}${n.post.imageUrl}`}
+                    src={
+                      n.post?.imageUrl
+                        ? `${API_ORIGIN}${n.post.imageUrl}`
+                        : "/no-post-thumb.jpg"
+                    }
                     alt="thumb"
                     className={styles.thumb}
                   />

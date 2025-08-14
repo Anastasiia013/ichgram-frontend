@@ -38,15 +38,29 @@
     transition: all 0.3s ease;
 }
 
-.navItem:hover {
+.navItem:hover,
+.navItemActive {
     border-radius: 8px;
     padding: 0px 8px;
     font-weight: 700;
 }
 
+.navItem.active {
+    font-weight: 700;
+    padding: 0 8px;
+    /* чтобы текст оставался сдвинутым */
+}
+
+
 .navItem:last-child {
     margin-top: 40px;
     /* padding: 6px 0px; */
+}
+
+
+.textShifted {
+    font-weight: 700;
+    padding: 0 8px;
 }
 
 .icon {

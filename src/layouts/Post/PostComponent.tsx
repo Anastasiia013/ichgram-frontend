@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
 import { useLikePost } from "../../shared/hooks/useLikePost";
@@ -60,7 +61,6 @@ const PostComponent: React.FC<PostProps> = ({ post, onPostUpdate }) => {
     if (commentsLoading) return;
     setCommentsLoading(true);
     try {
-
       const fullPost = await getPostById(localPost._id);
       setLocalPost(fullPost);
       setShowAllComments(true);
@@ -119,7 +119,13 @@ const PostComponent: React.FC<PostProps> = ({ post, onPostUpdate }) => {
           />
         </button>
 
-        <img src="/comments-icon.svg" className={styles.icon} alt="Comments" />
+        <Link to={`/posts/${localPost._id}`} state={{ background: location }}>
+          <img
+            src="/comments-icon.svg"
+            className={styles.icon}
+            alt="Comments"
+          />
+        </Link>
       </div>
 
       <div className={styles.likes}>{likesCount} likes</div>

@@ -17,9 +17,9 @@ export const verifyUserApi = async (code: string) => {
   return data;
 };
 
-export const sendResetLinkApi = async (email: string) => {
+export const sendResetLinkApi = async (value: string) => {
   const response = await backendInstance.post("/users/forgot-password", {
-    email,
+    identifier: value,
   });
   return response.data;
 };

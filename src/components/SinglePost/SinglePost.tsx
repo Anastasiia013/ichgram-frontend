@@ -64,30 +64,32 @@ const SinglePost: React.FC = () => {
     isProcessing: isCommentProcessing,
   } = useLikeComment(post, setPost);
 
+  // Загрузка поста
+  const fetchPost = async () => {
+    if (!postId) return;
+    setLoading(true);
+    try {
+      const data = await getPostById(postId);
+      setPost(data);
+      setAuthor(data.author);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError("Ошибка при загрузке поста");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
-
-    const fetchPost = async () => {
-      try {
-        if (!postId) return;
-        const data = await getPostById(postId);
-        setPost(data);
-        setAuthor(data.author);
-      } catch (err) {
-        setError("Ошибка при загрузке поста");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPost();
-
     return () => {
       document.body.style.overflow = "";
     };
   }, [postId]);
 
+  // Emoji для комментариев
   const handleEmojiInsert = (emoji: string) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -107,6 +109,7 @@ const SinglePost: React.FC = () => {
     });
   };
 
+  // Добавление комментария
   const handleAddComment = async () => {
     if (!commentText.trim() || !currentUser || !post || !token) return;
 
@@ -165,7 +168,7 @@ const SinglePost: React.FC = () => {
             {author && (
               <div className={styles.authorInfo}>
                 <Link
-                  to={`/profile/${author.username}`}
+                  to={`/users/${author.username}`}
                   className={styles.authorLink}
                 >
                   <GradientAvatar
@@ -175,10 +178,12 @@ const SinglePost: React.FC = () => {
                   />
                 </Link>
                 <Link
-                  to={`/profile/${author.username}`}
+                  to={`/users/${author.username}`}
                   className={styles.authorLink}
                 >
-                  <strong>{author.username}</strong>
+                  <strong style={{ cursor: "pointer" }}>
+                    {author.username}
+                  </strong>
                 </Link>
 
                 {currentUser && currentUser._id !== author._id && (
@@ -212,7 +217,7 @@ const SinglePost: React.FC = () => {
                     size={28}
                   />
                   <span className={styles.userPost}>
-                    <p style={{ cursor: "default" }}>
+                    <p style={{ cursor: "default", padding: "4px 0px" }}>
                       <strong>{author.username}</strong>{" "}
                       {post.caption || "Без описания"}
                     </p>
@@ -293,6 +298,7 @@ const SinglePost: React.FC = () => {
           </div>
         </div>
 
+        {/* Модалки */}
         {showActions && (
           <PostActionsModal
             postId={post._id}
@@ -315,7 +321,10 @@ const SinglePost: React.FC = () => {
             initialCaption={post.caption || ""}
             previewUrl={post.imageUrl}
             onClose={() => setIsEditing(false)}
-            onSaved={(updatedPost) => setPost(updatedPost)}
+            onSaved={async () => {
+              await fetchPost(); // заново запрашиваем пост с сервера
+              setIsEditing(false);
+            }}
           />
         )}
       </div>
