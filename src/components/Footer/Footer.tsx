@@ -5,22 +5,22 @@ const Footer: React.FC = () => {
   return (
     <footer className={styles.footer}>
       <nav className={styles.nav}>
-        <a href="" className={styles.link}>
+        <a href="/dashboard" className={styles.link}>
           Home
         </a>
-        <a href="" className={styles.link}>
+        <a href="/search" className={styles.link}>
           Search
         </a>
-        <a href="" className={styles.link}>
+        <a href="/explore" className={styles.link}>
           Explore
         </a>
-        <a href="" className={styles.link}>
+        <a href="/messages" className={styles.link}>
           Messages
         </a>
-        <a href="" className={styles.link}>
+        <a href="/notifications" className={styles.link}>
           Notifications
         </a>
-        <a href="" className={styles.link}>
+        <a href="/create-new-post" className={styles.link}>
           Create
         </a>
       </nav>
