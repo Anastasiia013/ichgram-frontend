@@ -9,6 +9,8 @@ import { jwtDecode } from "jwt-decode";
 
 const API_ORIGIN = import.meta.env.VITE_API_URL.replace("/api", "");
 
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:4000";
+
 interface Notification {
   _id: string;
   sender: {
@@ -39,7 +41,11 @@ const NotificationsPanel: React.FC<Props> = ({ isOpen, onClose, token }) => {
     if (!token) return;
 
     const { id: userId } = jwtDecode<{ id: string }>(token);
-    const socket: Socket = io(import.meta.env.VITE_SOCKET_URL, {
+
+    // Подключаемся к сокету
+    const socket: Socket = io(SOCKET_URL, {
+      path: "/socket.io",
+      transports: ["websocket"],
       auth: { token },
     });
 
