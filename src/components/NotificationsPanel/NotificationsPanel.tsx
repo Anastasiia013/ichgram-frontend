@@ -123,23 +123,27 @@ const NotificationsPanel: React.FC<Props> = ({ isOpen, onClose, token }) => {
             {notifications.map((n) => (
               <li key={n._id} className={styles.notification}>
                 <img
-                  onClick={() => handleGoToUser(n.sender.username)}
-                  style={{ cursor: "pointer" }}
+                  onClick={() => n.sender && handleGoToUser(n.sender.username)}
+                  style={{ cursor: n.sender ? "pointer" : "default" }}
                   src={
-                    n.sender.avatarUrl
+                    n.sender?.avatarUrl
                       ? `${API_ORIGIN}${n.sender.avatarUrl}`
                       : "/no-profile-pic-icon-11.jpg"
                   }
                   alt="avatar"
                   className={styles.avatar}
                 />
+
                 <div className={styles.text}>
-                  <span className={styles.username}>{n.sender.username}</span>{" "}
+                  <span className={styles.username}>
+                    {n.sender?.username || "Unknown User"}
+                  </span>{" "}
                   {renderNotificationText(n)}
                   <span className={styles.time}>
                     {getDateLabel(n.createdAt)}
                   </span>
                 </div>
+
                 {n.post?._id && (
                   <img
                     onClick={() => handleGoToPost(n.post?._id)}
